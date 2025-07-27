@@ -1,0 +1,39 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>SSE</title>
+</head>
+<body>
+    <h2>Push a Message:</h2>
+    <input type="text" id="push" />
+    <button id="btnSend">Push</button>
+
+    <h2>Messages received:</h2>
+    <pre id="show"></pre>
+
+    <script>
+        const urlPrefix = 'https://localhost:7279/api' // test CORS
+        const es = new EventSource(`${urlPrefix}/connect`);
+
+        es.onmessage = function (e) {
+            show.textContent += e.data + "\n"
+        }
+
+        es.onerror = function (e) {
+            console.error("sse Error", e)
+            es.close();
+        }
+
+        btnSend.onclick = function (e) {
+            fetch(`${urlPrefix}/push`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(push.value),
+            })
+        }
+
+
+    </script>
+</body>
+</html>
